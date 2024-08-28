@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Avaliação de Contratos | Serviço</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="./styles/global.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+      #notaTotal {
+        margin-top: 20px;
+        font-size: 1.2em;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <header>
+        <nav class="navbar">
+          <div class="logo">
+            <h1><i class="fa fa-snowflake-o"></i> Dufrio</h1>
+          </div>
+          <ul>
+            <li>
+              <a href="#"><i class="fa fa-home"></i> Seleção de Contratos</a>
+            </li>
+          </ul>
+        </nav>
+      </header>
+      <h1>Avaliação de Contratos | Serviço</h1>
+      <form id="evaluationForm">
+        <!-- Grupo de informações do contrato -->
+        <fieldset>
+          <legend><i class="fa fa-edit"></i> Informações do Contrato</legend>
+
+          <label for="dataAvaliacao">Data de avaliação:</label>
+          <input type="date" id="dataAvaliacao" name="dataAvaliacao" required />
+
+          <label for="nomeFornecedor">Nome do Fornecedor:</label>
+          <input
+            type="text"
+            id="nomeFornecedor"
+            name="nomeFornecedor"
+            required
+          />
+
+          <label for="numeroContrato">Número do Contrato:</label>
+          <input
+            type="text"
+            id="numeroContrato"
+            name="numeroContrato"
+            required
+          />
+        </fieldset>
+
+        <!-- Grupo de SLA -->
+        <fieldset>
+          <legend><i class="fa fa-clock-o"></i> Tempo de Resposta (SLA)</legend>
+          <!-- SLA Crítico -->
+          <label for="slaCriticoResolvido">SLA Crítico</label>
+          <select id="slaCriticoResolvido" name="slaCriticoResolvido">
+            <option value="3">
+              Até 4 horas - (Resposta rápida para situações críticas)
+            </option>
+            <option value="1.5">
+              Até 8 horas - (Resposta dentro de um prazo razoável para situações
+              críticas)
+            </option>
+            <option value="0">
+              Até 10 horas - (Resposta mais lenta para situações críticas)
+            </option>
+          </select>
+
+          <!-- SLA Médio -->
+          <label for="slaMedioResolvido">SLA Médio</label>
+          <select id="slaMedioResolvido" name="slaMedioResolvido">
+            <option value="3">
+              Até 8 horas - (Resposta eficiente para situações de prioridade
+              média)
+            </option>
+            <option value="1.5">
+              Até 10 horas - (Resposta adequada para situações de prioridade
+              média)
+            </option>
+            <option value="0">
+              Até 12 horas - (Resposta mais demorada para situações de
+              prioridade média)
+            </option>
+          </select>
+
+          <!-- SLA Baixo -->
+          <label for="slaBaixoResolvido">SLA Baixo</label>
+          <select id="slaBaixoResolvido" name="slaBaixoResolvido">
+            <option value="3">
+              Até 10 horas - (Resposta razoável para situações de baixa
+              prioridade)
+            </option>
+            <option value="1.5">
+              Até 24 horas - (Resposta lenta para situações de baixa prioridade)
+            </option>
+            <option value="0">
+              Até 48 horas - (Resposta muito lenta para situações de baixa
+              prioridade)
+            </option>
+          </select>
+        </fieldset>
+
+        <!-- Pacote de Serviço -->
+        <label for="pacoteServico"
+          ><i class="fa fa-gear"></i> Pacote de Serviço:</label
+        >
+        <select id="pacoteServico" name="pacoteServico">
+          <option value="3">Flexível - (Em grande parte personalizável)</option>
+          <option value="1.5">
+            Parcialmente Flexível - (Algumas opções de personalização
+            disponíveis)
+          </option>
+          <option value="0">
+            Não Flexível - (Sem opções de personalização)
+          </option>
+        </select>
+
+        <!-- NDA -->
+        <label for="confidencialidade"
+          ><i class="fa fa-lock"></i> Tem NDA? (Acordo de
+          Confidencialidade)</label
+        >
+        <select
+          id="confidencialidade"
+          name="confidencialidade"
+          onchange="verificarNDA()"
+        >
+          <option value="3">Sim</option>
+          <option value="0">Não</option>
+        </select>
+
+        <!-- Multa Rescisória (%) -->
+        <label for="multa"
+          ><i class="fa fa-percent"></i> Multa Rescisória (%):</label
+        >
+        <select id="multa" name="multa">
+          <option value="3">
+            30% - (Multa considerável em caso de rescisão do contrato)
+          </option>
+          <option value="1">
+            50% - (Multa elevada em caso de rescisão do contrato)
+          </option>
+          <option value="0">
+            51% ou mais - (Multa extremamente alta em caso de rescisão do
+            contrato)
+          </option>
+        </select>
+
+        <!-- Desconto por SLA Atrasado (%) -->
+        <label for="desconto"
+          ><i class="fa fa-percent"></i> Desconto por SLA Atrasado (%):</label
+        >
+        <select id="desconto" name="desconto">
+          <option value="3">
+            10% - (Desconto significativo em caso de atraso no SLA)
+          </option>
+          <option value="1.5">
+            5% - (Desconto moderado em caso de atraso no SLA)
+          </option>
+          <option value="0">
+            0% - (Nenhum desconto em caso de atraso no SLA)
+          </option>
+        </select>
+
+        <!-- Reajuste -->
+        <label for="reajuste">Reajuste Anual:</label>
+        <select id="reajuste" name="reajuste">
+          <option value="3">IGPM - (Índice Geral de Preços do Mercado)</option>
+          <option value="1.5">
+            IPCA - (Índice de Preços ao Consumidor Amplo)
+          </option>
+          <option value="0">
+            Outro - (Qualquer outro índice ou sem reajuste fixo)
+          </option>
+        </select>
+
+        <!-- Valores do Serviço -->
+        <label for="valoresServico">Valores do Serviço:</label>
+        <select id="valoresServico" name="valoresServico">
+          <option value="3">
+            Sim - (Condições de pagamento estão de acordo com as condições
+            praticadas pela Dufrio)
+          </option>
+          <option value="1.5">
+            Parcial - (Condições de pagamento estão parcialmente de acordo com
+            as condições praticadas pela Dufrio)
+          </option>
+          <option value="0">
+            Não - (Condições de pagamento não estão de acordo com as condições
+            praticadas pela Dufrio)
+          </option>
+        </select>
+
+        <!-- Escalabilidade do Custo -->
+        <label for="escalabilidadeCusto">Escalabilidade do Custo:</label>
+        <select id="escalabilidadeCusto" name="escalabilidadeCusto">
+          <option value="3">
+            Alta - (Custos facilmente escaláveis conforme demanda)
+          </option>
+          <option value="1.5">
+            Média - (Custos escaláveis com algumas limitações)
+          </option>
+          <option value="0">Baixa - (Custos com pouca escalabilidade)</option>
+        </select>
+
+        <!-- Novos Critérios -->
+        <label for="regulamentacaoLGPD">
+          <i class="fa fa-check-square-o"></i> A empresa adere às
+          regulamentações da LGPD ou GDPR?
+        </label>
+        <select id="regulamentacaoLGPD" name="regulamentacaoLGPD">
+          <option value="3">Sim</option>
+          <option value="0">Não</option>
+        </select>
+
+        <label for="praticasSustentaveis">
+          <i class="fa fa-leaf"></i> A empresa adere a práticas sustentáveis e
+          ambientais?
+        </label>
+        <select id="praticasSustentaveis" name="praticasSustentaveis">
+          <option value="3">Sim</option>
+          <option value="0">Não</option>
+        </select>
+        <div id="resultado"></div>
+        <div id="notaTotal"></div>
+
+        <button type="button" onclick="calcularNota()">Calcular Nota</button>
+        <button type="button" onclick="exportarExcel()">
+          Exportar para Excel
+        </button>
+        <button type="reset">Limpar Formulário</button>
+      </form>
+    </div>
+
+    <script>
+      function verificarNDA() {
+        const nda = document.getElementById("confidencialidade").value;
+        const botaoCalcular = document.querySelector(
+          'button[onclick="calcularNota()"]'
+        );
+        const botaoExportar = document.querySelector(
+          'button[onclick="exportarExcel()"]'
+        );
+
+        if (nda === "0") {
+          botaoCalcular.disabled = true;
+          botaoExportar.disabled = true;
+        } else {
+          botaoCalcular.disabled = false;
+          botaoExportar.disabled = false;
+        }
+      }
+
+      function calcularNota() {
+        const slaCritico = parseFloat(
+          document.getElementById("slaCriticoResolvido").value
+        );
+        const slaMedio = parseFloat(
+          document.getElementById("slaMedioResolvido").value
+        );
+        const slaBaixo = parseFloat(
+          document.getElementById("slaBaixoResolvido").value
+        );
+        const pacoteServico = parseFloat(
+          document.getElementById("pacoteServico").value
+        );
+        const confidencialidade = parseFloat(
+          document.getElementById("confidencialidade").value
+        );
+        const multa = parseFloat(document.getElementById("multa").value);
+        const desconto = parseFloat(document.getElementById("desconto").value);
+        const reajuste = parseFloat(document.getElementById("reajuste").value);
+        const valoresServico = parseFloat(
+          document.getElementById("valoresServico").value
+        );
+        const escalabilidadeCusto = parseFloat(
+          document.getElementById("escalabilidadeCusto").value
+        );
+        const regulamentacaoLGPD = parseFloat(
+          document.getElementById("regulamentacaoLGPD").value
+        );
+        const praticasSustentaveis = parseFloat(
+          document.getElementById("praticasSustentaveis").value
+        );
+
+        const totalSLA = (slaCritico + slaMedio + slaBaixo) / 3;
+        const notaTotal =
+          totalSLA +
+          pacoteServico +
+          confidencialidade +
+          multa +
+          desconto +
+          reajuste +
+          valoresServico +
+          escalabilidadeCusto +
+          regulamentacaoLGPD +
+          praticasSustentaveis;
+
+        document.getElementById("notaTotal").innerText =
+          "Nota Total: " + notaTotal.toFixed(2);
+      }
+
+      function exportarExcel() {
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.json_to_sheet([
+          {
+            "Data de Avaliação": document.getElementById("dataAvaliacao").value,
+            "Nome do Fornecedor":
+              document.getElementById("nomeFornecedor").value,
+            "Número do Contrato":
+              document.getElementById("numeroContrato").value,
+            "SLA Crítico": document.getElementById("slaCriticoResolvido").value,
+            "SLA Médio": document.getElementById("slaMedioResolvido").value,
+            "SLA Baixo": document.getElementById("slaBaixoResolvido").value,
+            "Pacote de Serviço": document.getElementById("pacoteServico").value,
+            "Confidencialidade (NDA)":
+              document.getElementById("confidencialidade").value,
+            "Multa Rescisória": document.getElementById("multa").value,
+            "Desconto por SLA Atrasado":
+              document.getElementById("desconto").value,
+            "Reajuste Anual": document.getElementById("reajuste").value,
+            "Valores do Serviço":
+              document.getElementById("valoresServico").value,
+            "Escalabilidade do Custo": document.getElementById(
+              "escalabilidadeCusto"
+            ).value,
+            "Regulamentação LGPD":
+              document.getElementById("regulamentacaoLGPD").value,
+            "Práticas Sustentáveis": document.getElementById(
+              "praticasSustentaveis"
+            ).value,
+            "Nota Total": document
+              .getElementById("notaTotal")
+              .innerText.replace("Nota Total: ", ""),
+          },
+        ]);
+
+        XLSX.utils.book_append_sheet(wb, ws, "Avaliação");
+        XLSX.writeFile(wb, "avaliacao_contratos.xlsx");
+      }
+    </script>
+  </body>
+</html>
