@@ -371,15 +371,9 @@
           ><i class="fa fa-percent"></i> Reajuste Anual (%):</label
         >
         <select id="reajuste" name="reajuste">
-          <option value="3">
-            Até 5% - (Reajuste anual mínimo, com impacto limitado)
-          </option>
-          <option value="1.5">
-            Até 10% - (Reajuste anual moderado, com impacto considerável)
-          </option>
-          <option value="0">
-            Mais de 10% - (Reajuste anual alto, com impacto significativo)
-          </option>
+          <option value="3">IPCA - (Índice de Preços ao Consumidor)</option>
+          <option value="3">IGP-M - (Índice Geral de Preços)</option>
+          <option value="0">Outro</option>
           <option value="NaN">Não se Aplica</option>
         </select>
 
@@ -441,105 +435,119 @@
       </form>
 
       <div id="notaTotal"></div>
-
-      <footer class="footer-developer">
-        <p>Desenvolvido por Cristian Andriel Silva da Silva</p>
-      </footer>
+      <p id="statusMensagem"></p>
     </div>
 
     <script>
-      function calcularNota() {
-        const slaCriticoResolvido =
-          parseFloat(document.getElementById("slaCriticoResolvido").value) || 0;
-        const slaMedioResolvido =
-          parseFloat(document.getElementById("slaMedioResolvido").value) || 0;
-        const slaBaixoResolvido =
-          parseFloat(document.getElementById("slaBaixoResolvido").value) || 0;
-        const pacoteServico =
-          parseFloat(document.getElementById("pacoteServico").value) || 0;
-        const confidencialidade =
-          parseFloat(document.getElementById("confidencialidade").value) || 0;
-        const multa = parseFloat(document.getElementById("multa").value) || 0;
-        const desconto =
-          parseFloat(document.getElementById("desconto").value) || 0;
-        const reajuste =
-          parseFloat(document.getElementById("reajuste").value) || 0;
-        const suporteOperacional =
-          parseFloat(document.getElementById("suporteOperacional").value) || 0;
-        const disponibilidadeMinima =
-          parseFloat(document.getElementById("disponibilidadeMinima").value) ||
-          0;
-        const periodoGarantia =
-          parseFloat(document.getElementById("periodoGarantia").value) || 0;
-        const sancaoIndisponibilidade =
-          parseFloat(
-            document.getElementById("sancaoIndisponibilidade").value
-          ) || 0;
+            function calcularNota() {
+              const slaCriticoResolvido =
+                parseFloat(document.getElementById("slaCriticoResolvido").value) || 0;
+              const slaMedioResolvido =
+                parseFloat(document.getElementById("slaMedioResolvido").value) || 0;
+              const slaBaixoResolvido =
+                parseFloat(document.getElementById("slaBaixoResolvido").value) || 0;
+              const pacoteServico =
+                parseFloat(document.getElementById("pacoteServico").value) || 0;
+              const confidencialidade =
+                parseFloat(document.getElementById("confidencialidade").value) || 0;
+              const multa = parseFloat(document.getElementById("multa").value) || 0;
+              const desconto =
+                parseFloat(document.getElementById("desconto").value) || 0;
+              const reajuste =
+                parseFloat(document.getElementById("reajuste").value) || 0;
+              const suporteOperacional =
+                parseFloat(document.getElementById("suporteOperacional").value) || 0;
+              const disponibilidadeMinima =
+                parseFloat(document.getElementById("disponibilidadeMinima").value) ||
+                0;
+              const periodoGarantia =
+                parseFloat(document.getElementById("periodoGarantia").value) || 0;
+              const sancaoIndisponibilidade =
+                parseFloat(
+                  document.getElementById("sancaoIndisponibilidade").value
+                ) || 0;
 
-        // Média dos critérios SLA
-        const mediaSLA =
-          (slaCriticoResolvido + slaMedioResolvido + slaBaixoResolvido) / 3;
+              // Média dos critérios SLA
+              const mediaSLA =
+                (slaCriticoResolvido + slaMedioResolvido + slaBaixoResolvido) / 3;
 
-        // Nota total
-        const notaTotal =
-          mediaSLA +
-          pacoteServico +
-          confidencialidade +
-          multa +
-          desconto +
-          reajuste +
-          suporteOperacional +
-          disponibilidadeMinima +
-          periodoGarantia +
-          sancaoIndisponibilidade;
+              // Nota total
+              const notaTotal =
+                mediaSLA +
+                pacoteServico +
+                confidencialidade +
+                multa +
+                desconto +
+                reajuste +
+                suporteOperacional +
+                disponibilidadeMinima +
+                periodoGarantia +
+                sancaoIndisponibilidade;
 
-        document.getElementById("notaTotal").innerText =
-          "Nota Total: " + notaTotal.toFixed(2);
-      }
+              document.getElementById("notaTotal").innerText =
+                "Nota Total: " + notaTotal.toFixed(2);
 
-      function exportarParaExcel() {
-        // Obtendo os dados do formulário
-        const formData = new FormData(
-          document.getElementById("evaluationForm")
-        );
-        const data = {};
-        formData.forEach((value, key) => {
-          data[key] = value;
-        });
-
-        // Adicionando a nota total aos dados
-        const notaTotal = document
-          .getElementById("notaTotal")
-          .innerText.replace("Nota Total: ", "");
-        data["notaTotal"] = notaTotal;
-
-        // Criando uma planilha Excel com os dados
-        const ws = XLSX.utils.json_to_sheet([data]);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Avaliação de Contratos");
-
-        // Salvando o arquivo
-        XLSX.writeFile(wb, "avaliacao_contratos.xlsx");
-      }
-
-      function verificarNDA() {
-        const ndaValue = document.getElementById("confidencialidade").value;
-        const isNDA = ndaValue === "3";
-
-        // Habilita ou desabilita os botões com base na seleção do NDA
-        document.querySelectorAll("button").forEach((button) => {
-          if (button.textContent === "Limpar Formulário") {
-            button.disabled = false;
+            // Definir a mensagem com base na nota total
+            let statusMensagem = '';
+          if (notaTotal >= 15) {
+              statusMensagem = 'Passou';
+          } else if (notaTotal >= 10) {
+              statusMensagem = 'Parcial';
           } else {
-            button.disabled = !isNDA;
+              statusMensagem = 'Não Passa';
           }
-        });
+
+          // Exibir a mensagem de status no HTML
+          document.getElementById('statusMensagem').textContent = statusMensagem;
       }
 
-      function limparFormulario() {
-        document.getElementById("evaluationForm").reset();
-        document.getElementById("notaTotal").innerText = "";
-      }
+
+
+
+            function exportarParaExcel() {
+              // Obtendo os dados do formulário
+              const formData = new FormData(
+                document.getElementById("evaluationForm")
+              );
+              const data = {};
+              formData.forEach((value, key) => {
+                data[key] = value;
+              });
+
+              // Adicionando a nota total aos dados
+              const notaTotal = document
+                .getElementById("notaTotal")
+                .innerText.replace("Nota Total: ", "");
+              data["notaTotal"] = notaTotal;
+
+              // Criando uma planilha Excel com os dados
+              const ws = XLSX.utils.json_to_sheet([data]);
+              const wb = XLSX.utils.book_new();
+              XLSX.utils.book_append_sheet(wb, ws, "Avaliação de Contratos");
+
+              // Salvando o arquivo
+              XLSX.writeFile(wb, "avaliacao_contratos.xlsx");
+            }
+
+            function verificarNDA() {
+              const ndaValue = document.getElementById("confidencialidade").value;
+              const isNDA = ndaValue === "3";
+
+              // Habilita ou desabilita os botões com base na seleção do NDA
+              document.querySelectorAll("button").forEach((button) => {
+                if (button.textContent === "Limpar Formulário") {
+                  button.disabled = false;
+                } else {
+                  button.disabled = !isNDA;
+                }
+              });
+            }
+
+            function limparFormulario() {
+              document.getElementById("evaluationForm").reset();
+              document.getElementById("notaTotal").innerText = "";
+              document.getElementById("statusMensagem").innerText = "";
+            }
     </script>
   </body>
 </html>
