@@ -11,10 +11,194 @@
     <link rel="stylesheet" href="./styles/global.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 3%;
+        overflow-x: hidden; /* Evita rolagem horizontal */
+        height: auto;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+      }
+
+      header {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 0;
+        margin-bottom: 20px;
+        border-radius: 20px;
+      }
+
+      .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+      }
+
+      .logo h1 {
+        margin: 0;
+        font-size: 1.5em;
+      }
+
+      .logo i {
+        margin-right: 10px;
+      }
+
+      .navbar ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .navbar li {
+        display: inline;
+        margin-right: 20px;
+      }
+
+      .navbar a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 1.1em;
+      }
+
+      h1 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      form {
+        margin-top: 20px;
+      }
+
+      fieldset {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        background-color: #f9f9f9;
+      }
+
+      legend {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #007bff;
+      }
+
+      label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+      }
+
+      input[type="date"],
+      input[type="text"],
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        margin: 10px 0;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1em;
+        width: 100%; /* Faz com que o botão ocupe toda a largura disponível */
+      }
+
+      button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+
+      button:hover:not(:disabled) {
+        background-color: #0056b3;
+      }
+
       #notaTotal {
         margin-top: 20px;
         font-size: 1.2em;
         font-weight: bold;
+        color: #007bff;
+      }
+
+      footer {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 0;
+        text-align: center;
+        margin-top: 20px;
+        border-radius: 8px;
+      }
+
+      .footer-developer p {
+        margin: 0;
+      }
+
+      /* Estilos responsivos */
+      @media (max-width: 1280px) {
+        .footer-developer p {
+          font-size: 12px;
+        }
+      }
+
+      @media (max-width: 800px) {
+        form {
+          padding: 10px;
+        }
+
+        h1 {
+          font-size: 1.5em;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .navbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .navbar ul {
+          display: flex;
+          flex-direction: column;
+          padding: 0;
+        }
+
+        .navbar li {
+          margin-right: 0;
+          margin-bottom: 10px;
+        }
+
+        button {
+          width: auto; /* Remove largura total do botão para telas pequenas */
+          padding: 10px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        button {
+          width: 100%; /* Garante que o botão ocupe a largura total em telas muito pequenas */
+          margin-top: 10px;
+        }
       }
     </style>
   </head>
@@ -28,7 +212,9 @@
           </div>
           <ul>
             <li>
-              <a href="index.html"><i class="fa fa-home"></i> Seleção de Contratos</a>
+              <a href="index.html"
+                ><i class="fa fa-home"></i> Seleção de Contratos</a
+              >
             </li>
           </ul>
         </nav>
@@ -75,6 +261,7 @@
             <option value="0">
               Até 10 horas - (Resposta mais lenta para situações críticas)
             </option>
+            <option value="NaN">Não se Aplica</option>
           </select>
 
           <!-- SLA Médio -->
@@ -92,6 +279,7 @@
               Até 12 horas - (Resposta mais demorada para situações de
               prioridade média)
             </option>
+            <option value="NaN">Não se Aplica</option>
           </select>
 
           <!-- SLA Baixo -->
@@ -108,6 +296,7 @@
               Até 48 horas - (Resposta muito lenta para situações de baixa
               prioridade)
             </option>
+            <option value="NaN">Não se Aplica</option>
           </select>
         </fieldset>
 
@@ -124,6 +313,7 @@
           <option value="0">
             Não Flexível - (Sem opções de personalização)
           </option>
+          <option value="NaN">Não se Aplica</option>
         </select>
 
         <!-- NDA -->
@@ -138,6 +328,7 @@
         >
           <option value="3">Sim</option>
           <option value="0">Não</option>
+          <option value="NaN">Não se Aplica</option>
         </select>
 
         <!-- Multa Rescisória (%) -->
@@ -155,6 +346,7 @@
             51% ou mais - (Multa extremamente alta em caso de rescisão do
             contrato)
           </option>
+          <option value="NaN">Não se Aplica</option>
         </select>
 
         <!-- Desconto por SLA Atrasado (%) -->
@@ -171,183 +363,182 @@
           <option value="0">
             0% - (Nenhum desconto em caso de atraso no SLA)
           </option>
+          <option value="NaN">Não se Aplica</option>
         </select>
 
-        <!-- Reajuste -->
-        <label for="reajuste">Reajuste Anual:</label>
+        <!-- Reajuste Anual (%) -->
+        <label for="reajuste"
+          ><i class="fa fa-percent"></i> Reajuste Anual (%):</label
+        >
         <select id="reajuste" name="reajuste">
-          <option value="3">IGPM - (Índice Geral de Preços do Mercado)</option>
+          <option value="3">
+            Até 5% - (Reajuste anual mínimo, com impacto limitado)
+          </option>
           <option value="1.5">
-            IPCA - (Índice de Preços ao Consumidor Amplo)
+            Até 10% - (Reajuste anual moderado, com impacto considerável)
           </option>
           <option value="0">
-            Outro - (Qualquer outro índice ou sem reajuste fixo)
+            Mais de 10% - (Reajuste anual alto, com impacto significativo)
           </option>
+          <option value="NaN">Não se Aplica</option>
         </select>
 
-        <!-- Valores do Serviço -->
-        <label for="valoresServico">Valores do Serviço:</label>
-        <select id="valoresServico" name="valoresServico">
-          <option value="3">
-            Sim - (Condições de pagamento estão de acordo com as condições
-            praticadas pela Dufrio)
-          </option>
-          <option value="1.5">
-            Parcial - (Condições de pagamento estão parcialmente de acordo com
-            as condições praticadas pela Dufrio)
-          </option>
-          <option value="0">
-            Não - (Condições de pagamento não estão de acordo com as condições
-            praticadas pela Dufrio)
-          </option>
-        </select>
-
-        <!-- Escalabilidade do Custo -->
-        <label for="escalabilidadeCusto">Escalabilidade do Custo:</label>
-        <select id="escalabilidadeCusto" name="escalabilidadeCusto">
-          <option value="3">
-            Alta - (Custos facilmente escaláveis conforme demanda)
-          </option>
-          <option value="1.5">
-            Média - (Custos escaláveis com algumas limitações)
-          </option>
-          <option value="0">Baixa - (Custos com pouca escalabilidade)</option>
-        </select>
-
-        <!-- Novos Critérios -->
-        <label for="regulamentacaoLGPD">
-          <i class="fa fa-check-square-o"></i> A empresa adere às
-          regulamentações da LGPD ou GDPR?
+        <!-- Novo campo: Plantão de Suporte Operacional -->
+        <label for="suporteOperacional">
+          <i class="fa fa-hospital-o"></i> Possuem plantão para atendimento de
+          Suporte Operacional em caso de incidentes?
         </label>
-        <select id="regulamentacaoLGPD" name="regulamentacaoLGPD">
-          <option value="3">Sim</option>
+        <select id="suporteOperacional" name="suporteOperacional">
+          <option value="1">Sim</option>
           <option value="0">Não</option>
+          <option value="NaN">Não se Aplica</option>
         </select>
 
-        <label for="praticasSustentaveis">
-          <i class="fa fa-leaf"></i> A empresa adere a práticas sustentáveis e
-          ambientais?
+        <!-- Novo campo: Disponibilidade Mínima -->
+        <label for="disponibilidadeMinima">
+          <i class="fa fa-signal"></i> Qual a disponibilidade mínima garantida
+          pela empresa?
         </label>
-        <select id="praticasSustentaveis" name="praticasSustentaveis">
-          <option value="3">Sim</option>
-          <option value="0">Não</option>
+        <select id="disponibilidadeMinima" name="disponibilidadeMinima">
+          <option value="3">Acima de 99,1 %</option>
+          <option value="1.5">Entre 95% e 99%</option>
+          <option value="0">Abaixo de 94,9%</option>
+          <option value="NaN">Não se Aplica</option>
         </select>
-        <div id="resultado"></div>
-        <div id="notaTotal"></div>
 
+        <!-- Novo campo: Período de Garantia -->
+        <label for="periodoGarantia">
+          <i class="fa fa-calendar"></i> Sob qual período é garantido essa
+          disponibilidade?
+        </label>
+        <select id="periodoGarantia" name="periodoGarantia">
+          <option value="3">Mensal</option>
+          <option value="2">Trimestral</option>
+          <option value="1.5">Semestral</option>
+          <option value="0">Anual</option>
+          <option value="NaN">Não se Aplica</option>
+        </select>
+
+        <!-- Novo campo: Sanções em Caso de Indisponibilidade -->
+        <label for="sancaoIndisponibilidade">
+          <i class="fa fa-warning"></i> Existe sanções em caso de uma
+          indisponibilidade maior que a garantida, em horário comercial?
+        </label>
+        <select id="sancaoIndisponibilidade" name="sancaoIndisponibilidade">
+          <option value="1">Sim</option>
+          <option value="0">Não</option>
+          <option value="NaN">Não se Aplica</option>
+        </select>
+
+        <!-- Botões -->
         <button type="button" onclick="calcularNota()">Calcular Nota</button>
-        <button type="button" onclick="exportarExcel()">
+        <button type="button" onclick="exportarParaExcel()">
           Exportar para Excel
         </button>
-        <button type="reset">Limpar Formulário</button>
+        <button type="button" onclick="limparFormulario()">
+          Limpar Formulário
+        </button>
       </form>
+
+      <div id="notaTotal"></div>
+
+      <footer class="footer-developer">
+        <p>Desenvolvido por Cristian Andriel Silva da Silva</p>
+      </footer>
     </div>
 
     <script>
-      function verificarNDA() {
-        const nda = document.getElementById("confidencialidade").value;
-        const botaoCalcular = document.querySelector(
-          'button[onclick="calcularNota()"]'
-        );
-        const botaoExportar = document.querySelector(
-          'button[onclick="exportarExcel()"]'
-        );
-
-        if (nda === "0") {
-          botaoCalcular.disabled = true;
-          botaoExportar.disabled = true;
-        } else {
-          botaoCalcular.disabled = false;
-          botaoExportar.disabled = false;
-        }
-      }
-
       function calcularNota() {
-        const slaCritico = parseFloat(
-          document.getElementById("slaCriticoResolvido").value
-        );
-        const slaMedio = parseFloat(
-          document.getElementById("slaMedioResolvido").value
-        );
-        const slaBaixo = parseFloat(
-          document.getElementById("slaBaixoResolvido").value
-        );
-        const pacoteServico = parseFloat(
-          document.getElementById("pacoteServico").value
-        );
-        const confidencialidade = parseFloat(
-          document.getElementById("confidencialidade").value
-        );
-        const multa = parseFloat(document.getElementById("multa").value);
-        const desconto = parseFloat(document.getElementById("desconto").value);
-        const reajuste = parseFloat(document.getElementById("reajuste").value);
-        const valoresServico = parseFloat(
-          document.getElementById("valoresServico").value
-        );
-        const escalabilidadeCusto = parseFloat(
-          document.getElementById("escalabilidadeCusto").value
-        );
-        const regulamentacaoLGPD = parseFloat(
-          document.getElementById("regulamentacaoLGPD").value
-        );
-        const praticasSustentaveis = parseFloat(
-          document.getElementById("praticasSustentaveis").value
-        );
+        const slaCriticoResolvido =
+          parseFloat(document.getElementById("slaCriticoResolvido").value) || 0;
+        const slaMedioResolvido =
+          parseFloat(document.getElementById("slaMedioResolvido").value) || 0;
+        const slaBaixoResolvido =
+          parseFloat(document.getElementById("slaBaixoResolvido").value) || 0;
+        const pacoteServico =
+          parseFloat(document.getElementById("pacoteServico").value) || 0;
+        const confidencialidade =
+          parseFloat(document.getElementById("confidencialidade").value) || 0;
+        const multa = parseFloat(document.getElementById("multa").value) || 0;
+        const desconto =
+          parseFloat(document.getElementById("desconto").value) || 0;
+        const reajuste =
+          parseFloat(document.getElementById("reajuste").value) || 0;
+        const suporteOperacional =
+          parseFloat(document.getElementById("suporteOperacional").value) || 0;
+        const disponibilidadeMinima =
+          parseFloat(document.getElementById("disponibilidadeMinima").value) ||
+          0;
+        const periodoGarantia =
+          parseFloat(document.getElementById("periodoGarantia").value) || 0;
+        const sancaoIndisponibilidade =
+          parseFloat(
+            document.getElementById("sancaoIndisponibilidade").value
+          ) || 0;
 
-        const totalSLA = (slaCritico + slaMedio + slaBaixo) / 3;
+        // Média dos critérios SLA
+        const mediaSLA =
+          (slaCriticoResolvido + slaMedioResolvido + slaBaixoResolvido) / 3;
+
+        // Nota total
         const notaTotal =
-          totalSLA +
+          mediaSLA +
           pacoteServico +
           confidencialidade +
           multa +
           desconto +
           reajuste +
-          valoresServico +
-          escalabilidadeCusto +
-          regulamentacaoLGPD +
-          praticasSustentaveis;
+          suporteOperacional +
+          disponibilidadeMinima +
+          periodoGarantia +
+          sancaoIndisponibilidade;
 
         document.getElementById("notaTotal").innerText =
           "Nota Total: " + notaTotal.toFixed(2);
       }
 
-      function exportarExcel() {
-        const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.json_to_sheet([
-          {
-            "Data de Avaliação": document.getElementById("dataAvaliacao").value,
-            "Nome do Fornecedor":
-              document.getElementById("nomeFornecedor").value,
-            "Número do Contrato":
-              document.getElementById("numeroContrato").value,
-            "SLA Crítico": document.getElementById("slaCriticoResolvido").value,
-            "SLA Médio": document.getElementById("slaMedioResolvido").value,
-            "SLA Baixo": document.getElementById("slaBaixoResolvido").value,
-            "Pacote de Serviço": document.getElementById("pacoteServico").value,
-            "Confidencialidade (NDA)":
-              document.getElementById("confidencialidade").value,
-            "Multa Rescisória": document.getElementById("multa").value,
-            "Desconto por SLA Atrasado":
-              document.getElementById("desconto").value,
-            "Reajuste Anual": document.getElementById("reajuste").value,
-            "Valores do Serviço":
-              document.getElementById("valoresServico").value,
-            "Escalabilidade do Custo": document.getElementById(
-              "escalabilidadeCusto"
-            ).value,
-            "Regulamentação LGPD":
-              document.getElementById("regulamentacaoLGPD").value,
-            "Práticas Sustentáveis": document.getElementById(
-              "praticasSustentaveis"
-            ).value,
-            "Nota Total": document
-              .getElementById("notaTotal")
-              .innerText.replace("Nota Total: ", ""),
-          },
-        ]);
+      function exportarParaExcel() {
+        // Obtendo os dados do formulário
+        const formData = new FormData(
+          document.getElementById("evaluationForm")
+        );
+        const data = {};
+        formData.forEach((value, key) => {
+          data[key] = value;
+        });
 
-        XLSX.utils.book_append_sheet(wb, ws, "Avaliação");
+        // Adicionando a nota total aos dados
+        const notaTotal = document
+          .getElementById("notaTotal")
+          .innerText.replace("Nota Total: ", "");
+        data["notaTotal"] = notaTotal;
+
+        // Criando uma planilha Excel com os dados
+        const ws = XLSX.utils.json_to_sheet([data]);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Avaliação de Contratos");
+
+        // Salvando o arquivo
         XLSX.writeFile(wb, "avaliacao_contratos.xlsx");
+      }
+
+      function verificarNDA() {
+        const ndaValue = document.getElementById("confidencialidade").value;
+        const isNDA = ndaValue === "3";
+
+        // Habilita ou desabilita os botões com base na seleção do NDA
+        document.querySelectorAll("button").forEach((button) => {
+          if (button.textContent === "Limpar Formulário") {
+            button.disabled = false;
+          } else {
+            button.disabled = !isNDA;
+          }
+        });
+      }
+
+      function limparFormulario() {
+        document.getElementById("evaluationForm").reset();
+        document.getElementById("notaTotal").innerText = "";
       }
     </script>
   </body>
