@@ -602,7 +602,6 @@
         document.getElementById("notaTotal").innerText =
           "Nota Total: " + notaTotal.toFixed(2);
 
-        // Definir a mensagem com base na nota total
         let statusMensagem = "";
         if (notaTotal >= 30.75) {
           statusMensagem = "Passou";
@@ -632,13 +631,18 @@
           .innerText.replace("Nota Total: ", "");
         data["notaTotal"] = notaTotal;
 
-        // Criando uma planilha Excel com os dados
+        const statusMensagem = document
+          .getElementById("statusMensagem")
+          .innerText.replace("Status: ", "");
+        data["Status"] = statusMensagem;
+        
+        // Criando uma planilha Excel
         const ws = XLSX.utils.json_to_sheet([data]);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Avaliação de Contratos");
 
         // Salvando o arquivo
-        XLSX.writeFile(wb, "avaliacao_contratos.xlsx");
+        XLSX.writeFile(wb, "Fornecedor_Avaliacao_01_Data.xlsx");
       }
 
       function verificarNDA() {
